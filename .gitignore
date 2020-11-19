@@ -1,0 +1,11 @@
+#Ignorar todos los archivos de tipo
+*.txt
+*.log
+
+#Ignorar archivos en rutas especificas.
+pos/pos/models/global.php
+pos/pos/models/conexion/conexion.php
+pos/pos/util/validar.php
+pos/pos/util/sesion.php
+pos/pos/util/util.php
+pos/pos/util/email.php
