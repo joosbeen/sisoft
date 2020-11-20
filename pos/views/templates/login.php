@@ -73,7 +73,9 @@
 					</div>
 					
 					<!-- Modal footer -->
-					<div class="modal-footer">
+					<div class="modal-footer p-2">
+						<br />
+						<br />
 						<button type="button" class="btn btn-primary mb-2 btn-block" id="btnEmail_reset">Aceptar</button>
 						<!--button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button-->
 					</div>
@@ -139,7 +141,7 @@
 							data: json,
 							type: "post",
 							success: function(result){
-								if (result.startsWith("ok") || result.endsWith("ok")) {
+								if (result.message.startsWith("ok") || result.message.endsWith("ok")) {
 									window.location.replace("pos/");
 								} else {
 									showAlertExitoso("Success!","* Ocurrio un error al tratar de iniciar sesión.");

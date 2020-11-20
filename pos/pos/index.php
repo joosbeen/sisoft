@@ -1,11 +1,26 @@
 <?php 
+
+
+
 require_once 'util/sesion.php';
 require_once 'models/global.php';
 require_once 'models/conexion/conexion.php';
 
 require_once 'controllers/view/ViewCtrl.php';
 require_once 'models/view/ViewMdl.php';
-sesionCreada();
+
+
+if (!sesionCreada() || (isset($_GET["action"]) && $_GET["action"]=="sesionclose")) {
+
+// remove all session variables
+session_unset();
+
+// destroy the session
+session_destroy();
+
+header("location: ../");
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -106,7 +121,7 @@ sesionCreada();
                             <a class="dropdown-item" href="#">Link 1</a>
                             <a class="dropdown-item" href="#">Link 2</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Link 3</a>
+                            <a class="dropdown-item" href="sesionclose">Cerrar Sesión</a>
                         </div>
                     </li>
                 </ul>

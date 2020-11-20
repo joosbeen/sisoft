@@ -43,9 +43,8 @@
 			if ($result->num_rows > 0) {
 				$row = $result->fetch_assoc();
 
-				if ($row["estado"] === true) {
+				if ($row["estado"] == true) {
 					crearSesion($row);
-					$conexion->close();
 					$data = array('message' => 'ok');
 					echo json_encode($data);					
 				} else {
