@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>Si Soft - POS</title>
+		<link rel="shortcut icon" href="views/img/logo.png" />
 		<?php include_once 'views/fragmentos/vendor.php'; ?>
 		
 	</head>
@@ -32,12 +33,12 @@
 				<?php include_once 'views/fragmentos/alertas.php'; ?>
 				<form id="formLogin" autocomplete="off">
 					<div class="form-group">
-						<label for="username"><strong>Usuario:</strong> <span class="badge badge-dark" data-toggle="tooltip" title="Caracteres permitidos: a-z, A-Z, 0-9, *, #.">?</span></label>
+						<label for="username"><strong>Usuario:</strong> <span class="badge badge-dark" data-toggle="tooltip" title="Caracteres permitidos: a-z, A-Z, 0-9, * , # , . , _ , @">?</span></label>
 						<input type="text" class="form-control" placeholder="Ingrese usuario o correo" id="username" name="username">
 						<small class="text-left text-danger w-100" id="msj_username"></small>
 					</div>
 					<div class="form-group">
-						<label for="password"><strong>Contrase&ntilde;a:</strong> <span class="badge badge-dark" data-toggle="tooltip" title="Caracteres permitidos: a-z, A-Z, 0-9, *, #.">?</span></label>
+						<label for="password"><strong>Contrase&ntilde;a:</strong> <span class="badge badge-dark" data-toggle="tooltip" title="Caracteres permitidos: a-z, A-Z, 0-9, * , # , . , _ , @">?</span></label>
 					</div>
 					<div class="input-group mb-3">
 						<input type="password" class="form-control" placeholder="Ingrese contrase&ntilde;a" id="password" name="password">
@@ -92,7 +93,7 @@
 				$("#username, #password").keypress(function(event) {
 					$("#msj_username").text('');
 					$("#msj_password").text('');
-					if ( (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode<65 || event.keyCode>90) && (event.keyCode<97 || event.keyCode>122) && event.keyCode != 35 && event.keyCode != 42 ) {
+					if ( (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode<65 || event.keyCode>90) && (event.keyCode<97 || event.keyCode>122) && event.keyCode != 35 && event.keyCode != 42 && event.keyCode != 64 && event.keyCode != 46 && event.keyCode != 95) {
 						return false;
 					}
 					let user_pass = $(this).val() + String.fromCharCode(event.keyCode);

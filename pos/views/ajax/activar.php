@@ -33,7 +33,7 @@
 			
 			$conexion = conexion();
 
-			$sql = "SELECT * FROM usuarios WHERE correo='" . obtenerSession()["correo"] . "' LIMIT 1;" ;
+			$sql = "SELECT * FROM usuarios WHERE idusuario = " . obtenerSession()["idusuario"] . ";" ;
 
 			$result = $conexion->query($sql);
 
@@ -47,8 +47,7 @@
 
 					if ($row["codigo_verificacion"] == $codigo) {
 
-						$sql = "UPDATE admin_empresa SET estado=true WHERE idadmin_empresa=" . $row["idadmin_empresa"] . ";";
-						$sql = "UPDATE admin_empresa SET estado=true WHERE idadmin_empresa=" . $row["idadmin_empresa"] . ";";
+						$sql = "UPDATE usuarios SET estado=true WHERE idusuario = " . obtenerSession()["idusuario"] . ";";
 
 						if ($conexion->query($sql) === TRUE) {
 							httpResponseCode_Mensaje(200, 'ok');						    

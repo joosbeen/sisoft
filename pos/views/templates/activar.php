@@ -10,6 +10,7 @@ if (sesionCreada() && obtenerSession()["estado"] != false) {
 <html lang="es">
 	<head>
 		<title>Si Soft - POS</title>
+		<link rel="shortcut icon" href="views/img/logo.png" />
 		<?php include_once 'views/fragmentos/vendor.php'; ?>
 		
 	</head>

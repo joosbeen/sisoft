@@ -23,50 +23,67 @@
 		$rfc = $_POST["rfc"];
 		$telefono = $_POST["telefono"];
 		$correo = $_POST["correo"];
+		$direccion = $_POST["direccion"];
+
 		$password = $_POST["password"];
 		$usuario = $_POST["usuario"];
 		$unombre = $_POST["unombre"];
-		$direccion = $_POST["direccion"];
 		$utelefono = $_POST["utelefono"];
 		$ucorreo = $_POST["ucorreo"];
 
-		$mensaje = "";
 		//*********************************
 		//****** DATOS DE LA EMPRESA ******
 		//*********************************
+		$mensajeEmpresa = "";
 		if (esVacio($empresa)) {
-			$mensaje .= "* <strong>Datos de Empresa</strong> Campo nombre: es obligatorio. <br />";
+			$mensajeEmpresa .= "* Nombre: es obligatorio. <br />";
 		}
 		if (esVacio($rfc)) {
-			$mensaje .= "* <strong>Datos de Empresa</strong> Campo rfc: es obligatorio. <br />";
+			$mensajeEmpresa .= "* RFC: es obligatorio. <br />";
 		}
 		if (esVacio($telefono)) {
-			$mensaje .= "* <strong>Datos de Empresa</strong> Campo télefono: es obligatorio. <br />";
+			$mensajeEmpresa .= "* Télefono: es obligatorio. <br />";
 		}
 		if (esVacio($correo)) {
-			$mensaje .= "* <strong>Datos de Empresa</strong> Campo correo: es obligatorio. <br />";
+			$mensajeEmpresa .= "* Correo: es obligatorio. <br />";
 		} else if(!esEmail($correo)){
-			$mensaje .= "* <strong>Datos de Empresa</strong> Campo correo: formato incorrecto. <br />";
+			$mensajeEmpresa .= "* Correo: formato incorrecto. <br />";
+		}
+		if (esVacio($direccion)) {
+			$mensajeEmpresa .= "* Dirección: es obligatorio. <br />";
+		}
+
+		if (!esVacio($mensajeEmpresa)) {
+			$mensajeEmpresa = "Datos de Empresa <br /><br />" . $mensajeEmpresa;
+			
 		}
 
 		//*********************************
 		//******* DATOS DEL USUARIO *******
 		//*********************************
+		$mensajeUsuario = "";
 		if (esVacio($password)) {
-			$mensaje .= "* <strong>Datos de Usuario</strong> Campo contraseña: es obligatorio. <br />";
+			$mensajeUsuario .= "* <strong>Datos de Usuario</strong> Campo contraseña: es obligatorio. <br />";
 		}
 		if (esVacio($usuario)) {
-			$mensaje .= "* <strong>Datos de Usuario</strong> Campo usuario: es obligatorio. <br />";
+			$mensajeUsuario .= "* <strong>Datos de Usuario</strong> Campo usuario: es obligatorio. <br />";
 		}
 		if(esVacio($unombre)){
-			$mensaje .= "* <strong>Datos de Usuario</strong> Campo nombre: es obligatorio. <br />";
+			$mensajeUsuario .= "* <strong>Datos de Usuario</strong> Campo nombre: es obligatorio. <br />";
 		}
 		if(esVacio($utelefono)){
-			$mensaje .= "* <strong>Datos de Usuario</strong> Campo télefono: es obligatorio. <br />";
+			$mensajeUsuario .= "* <strong>Datos de Usuario</strong> Campo télefono: es obligatorio. <br />";
 		}
 		if(esVacio($ucorreo)){
-			$mensaje .= "* <strong>Datos de Usuario</strong> Campo correo: es obligatorio. <br />";
+			$mensajeUsuario .= "* <strong>Datos de Usuario</strong> Campo correo: es obligatorio. <br />";
 		}
+
+		if (!esVacio($mensajeUsuario)) {
+			$mensajeUsuario = "Datos de Usuario <br /><br />" . $mensajeUsuario;
+			
+		}
+
+		$mensaje = $mensajeEmpresa . $mensajeUsuario;
 
 		if ($mensaje == "") {
 
@@ -75,7 +92,9 @@
 			//Crear conexion
 			$conexion = conexion();
 
-			$sql = "SELECT * FROM admin_empresa WHERE UPPER(rfc_empresa)=UPPER('$empresa') OR UPPER(telefono_empresa)=UPPER('$telefono') OR UPPER(correo_empresa) = UPPER('$correo');";
+			$sql = "SELECT * 
+			FROM empresa 
+			WHERE UPPER(rfc)=UPPER('$empresa') OR UPPER(telefono)=UPPER('$telefono') OR UPPER(correo) = UPPER('$correo');";
 			
 			$result = $conexion->query($sql);
 			
@@ -112,44 +131,48 @@
 
 				} else {
 
-					$insertEmpresa = "INSERT INTO admin_empresa(nombre_empresa, rfc_empresa, telefono_empresa, correo_empresa, estado) 
-							VALUES ('$empresa', '$rfc', '$telefono', '$correo', false);";
+					$insertEmpresa = "INSERT INTO empresa(nombre, direccion, rfc, correo, telefono, estado, fecha_creada) 
+					VALUES ('$empresa', '$direccion', '$rfc', '$correo', '$telefono', true, now());";
 							
 					if ($conexion->query($insertEmpresa) === TRUE) {
 
 						$idempresa = $conexion->insert_id;
 
-						$insertSucursal = "INSERT INTO sucursal(direccion, telefono, correo, admin_empresa_idadmin_empresa) VALUES('$direccion', '$telefono', '$correo', $idempresa);";
+						$codigo_verificacion = generarCodigoVerificacion();
 
-						if ($conexion->query($insertSucursal) === TRUE) {
-									
-							$idsucursal = $conexion->insert_id;
-							$codigo_verificacion = generarCodigoVerificacion();
+						$insertUsuario = "INSERT INTO usuarios(nombre, usuario, contrasena, telefono, correo, estado, fecha_creacion, idrol, codigo_verificacion) VALUES ('$unombre', '$usuario', MD5('$password'), '$utelefono', '$ucorreo', false, NOW(), 1, '$codigo_verificacion');";
 
-							$insertUsuario = "INSERT INTO usuarios(nombre, usuario, contrasena, telefono, correo, sucursal_idsucursal, estado, fecha_creacion, idrol, codigo_verificacion) VALUES ('$unombre', '$usuario', '$password', '$utelefono', '$ucorreo', $idsucursal, false ,NOW(), 1, '$codigo_verificacion');";
+						if ($conexion->query($insertUsuario) === TRUE) {
+								
+							$idusuario = $conexion->insert_id;
 
-							if ($conexion->query($insertUsuario) === TRUE) {
-									
-								$idusuario = $conexion->insert_id;
+							$insertAdmin_empresa = "INSERT INTO admin_empresa(idusuario, idempresa) VALUES ($idusuario, $idempresa);";
+							
+							if ($conexion->query($insertAdmin_empresa) === TRUE) {
 
-								$qryUsuario = "SELECT u.*, ae.nombre_empresa, ae.rfc_empresa, ae.telefono_empresa, ae.estado AS 'estado_empresa', s.direccion AS 'direccion_empresa', r.rol FROM usuarios u, admin_empresa ae, sucursal s, roles r WHERE u.idrol = r.id AND s.admin_empresa_idadmin_empresa = ae.idadmin_empresa AND u.idusuario=$idusuario;";
+								$selectDatos = "SELECT us.*, ro.rol 
+								FROM usuarios us, roles ro 
+								WHERE us.idrol = ro.id AND us.idusuario = " . $idusuario;
 
-								$result = $conexion->query($qryUsuario);
+								$selectUsuario = $conexion->query($selectDatos);
+								$usuarioVO = $selectUsuario->fetch_assoc();
 
-								if ($result->num_rows > 0) {										    
-									$row = $result->fetch_assoc();
-									crearSesion($row);
-									httpResponseCode_Mensaje(200, 'ok');
-								}
+								$selectDatos = "SELECT ae.* 
+								FROM usuarios us, admin_empresa ae, empresa em 
+								WHERE ae.idusuario = us.idusuario AND ae.idempresa = em.idempresa AND ae.idusuario = $idusuario AND ae.idempresa = $idempresa";
 
-							} else {
-								$conexion->query("DELETE FROM admin_empresa WHERE idadmin_empresa=$idempresa;");
-								$conexion->query("DELETE FROM sucursal WHERE idsucursal=$idsucursal;");
-								httpResponseCode_Mensaje(403, 'No se logro registrarse, intentelo mas tarde.');
+								$selectEmpresa = $conexion->query($selectDatos);
+								$empresaVO = $selectEmpresa->fetch_assoc();
+
+								crearSesion($usuarioVO);
+								setEmpresa($empresaVO);
+								
+								httpResponseCode_Mensaje(200, 'ok');
+
 							}
-											
+
 						} else {
-							$conexion->query("DELETE FROM admin_empresa WHERE idadmin_empresa=$idempresa;");
+							$conexion->query("DELETE FROM empresa WHERE idempresa=$idempresa;");
 							httpResponseCode_Mensaje(403, 'No se logro registrarse, intentelo mas tarde.');
 						}
 

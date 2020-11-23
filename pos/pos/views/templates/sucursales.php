@@ -1,15 +1,49 @@
-<div class="row">
-	<?php include_once '../views/fragmentos/alertas.php'; ?>
-	<div class="col-xl-6 col-lg-6 col-md-6 col-sm-8 col-12">
-		<h2 class="text-dark">Lista de Sucursales</h2>
+<?php
+$conexion = conexion();
+?>
+<div class="container">
+	<div class="row">
+		<?php include_once '../views/fragmentos/alertas.php'; ?>
+		<div class="col-xl-6 col-lg-6 col-md-6 col-sm-8 col-12">
+			<!--h2 class="text-dark">Lista de Sucursales</h2-->
+			<h4 class="text-dark" style="text-decoration: underline;"><strong>Lista de Sucursales</strong></h4>
+		</div>
+		<div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
+			<button type="button" class="btn btn-secondary btn-sm float-xl-right float-lg-right float-md-right float-sm-right float-right" name="sucursal" value="">Agregar sucursal</button>
+		</div>
 	</div>
-	<div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-		<button type="button" class="btn btn-secondary btn-sm float-xl-right float-lg-right float-md-right float-sm-right float-right">Agregar sucursal</button>
-	</div>
-</div>
-<div class="table-responsive-sm">
-	<table class="table table-hover table-striped table-sm">
-		<thead class="thead-dark">
+	<br>
+	<div class="table-responsive-sm">
+		<table class="table table-hover table-striped table-sm" id="sucursales">
+			<thead class="thead-dark">
+				<tr>
+					<th>Descripción</th>
+					<th>Dirección</th>
+					<th>Teléfono</th>
+					<th>Correo</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+				
+				$where = esAdmin() ? " AND s.idsucursal = se.idsucursal AND se.idempresa = " . getEmpresa()["idempresa"] : "";
+				$qry = "SELECT s.* FROM sucursal s, sucursal_empresa se WHERE 1 = 1 " . $where;
+				$sucursales = $conexion->query($qry);
+				if ($sucursales->num_rows > 0) {				
+					while($sucursal = $sucursales->fetch_assoc()) {
+						echo "<tr>";
+							echo "<td>" . $sucursal["nombre"]  . "</td>";
+							echo "<td>" . $sucursal["direccion"]  . "</td>";
+							echo "<td>" . $sucursal["telefono"]  . "</td>";
+							echo "<td>" . $sucursal["correo"]  . "</td>";
+							echo "<td class='text-center'><button type='button' class='btn btn-secondary btn-sm' name='sucursal' value='" . $sucursal['idsucursal']  . "'>&#x1f589;</button></td>";
+						echo "</tr>";
+					}
+				}
+				?>
+			</tbody>
+			<tfoot class="thead-dark">
 			<tr>
 				<th>Descripción</th>
 				<th>Dirección</th>
@@ -17,95 +51,43 @@
 				<th>Correo</th>
 				<th>Acciones</th>
 			</tr>
-		</thead>
-		<tbody id="tbody">
-		</tbody>
-		<tfoot class="thead-dark">
-		<tr>
-			<th>Descripción</th>
-			<th>Dirección</th>
-			<th>Teléfono</th>
-			<th>Correo</th>
-			<th>Acciones</th>
-		</tr>
-		</tfoot>
-	</table>
-	<br>
-	<ul class="pagination justify-content-center">
-		<li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
-		<li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
-		<li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
-		<li class="page-item"><a class="page-link" href="javascript:void(0);">Next</a></li>
-	</ul>
+			</tfoot>
+		</table>
+		<br>
+	</div>
+	<form action="sucursal" method="post" id="form">
+		<input type="hidden" name="idsucursal" value="" id="idsucursal">
+	</form>
 </div>
-<script>
+<?php $conexion->close(); ?>
+<script type="text/javascript">
 	$(document).ready(function() {
-
-		window.paginationTable = function(page,limit) {
-
-			$.ajax({
-		        type: "get",
-		        dataType: "json",
-		        url: "views/ajax/sucursal/crud.php?action=paginacion&page="+page+"&limit="+limit,
-		        success: function(resultado) {
-		        	console.log("<----- success ----->");
-		        	console.log(resultado);
-		        	var filas = "";
-		        	
-		        },
-		        error: function(resultado) {
-		        	console.log("<----- error ----->");
-		        	console.log(resultado);
-		            //$("#alertdanger").html(resultado.responseJSON.message);
-		            //$("#alertdanger").show();
-		        }
-		    });
-
-		}
-
-		window.filasTable = function(action,page,limit) {
-			$.ajax({
-		        type: "get",
-		        dataType: "json",
-		        url: "views/ajax/sucursal/crud.php?action="+action+"&page="+page+"&limit="+limit,
-		        success: function(resultado) {
-		        	console.log("<----- success ----->");
-		        	console.log(resultado);
-		        	paginationTable(page,limit);
-		        	var filas = "";
-		        	//for (x in resultado) {
-		        	//
-		        	for (x = 0; x < resultado.length; x++) { 
-						filas += "<tr>";
-						filas += "<td>" + resultado[x].descripcion + "</td>";
-						filas += "<td>" + resultado[x].direccion + "</td>";
-						filas += "<td>" + resultado[x].telefono + "</td>";
-						filas += "<td>" + resultado[x].correo + "</td>";
-						filas += "<td><button type='button' class='btn btn-sm'><i class='fas fa-car'></i></button></td>";
-						filas += "</tr>";
-					}
-					if (filas == "") {
-						filas = "<tr><td colspan='5'></td></tr>";
-					}
-					$("#tbody").empty();
-					$("#tbody").html(filas);
-
-
-		        },
-		        error: function(xhr,status,error) {
-		        	console.log("<----- xhr ----->");
-		        	console.log(xhr);
-		        	console.log("<----- status ----->");
-		        	console.log(status);
-		        	console.log("<----- error ----->");
-		        	console.log(error);
-		            //$("#alertdanger").html(resultado.responseJSON.message);
-		            //$("#alertdanger").show();
-		        }
-		    });
-		}
-
-		filasTable('filas',0,10);
-		
+		$('#sucursales').DataTable({
+			lengthMenu: [10, 20, 50],
+			language: {
+				decimal: "",
+				emptyTable: "No hay información",
+				info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+				infoEmpty: "Mostrando 0 to 0 of 0 registros",
+				infoFiltered: "(Filtrado de _MAX_ total registros)",
+				infoPostFix: "",
+				lengthMenu: "Mostrar _MENU_ registros",
+				loadingRecords: "Cargando...",
+				processing: "Procesando...",
+				search: "Buscar:",
+				thousands: ",",
+				zeroRecords: "No se han encontrado resultados",
+				paginate: {
+					first: "Primero",
+					last: "Último",
+					next: "Siguiente",
+					previous: "Anterior"
+				}
+			}
+		});
+	});
+	$("button[name='sucursal']").click(function() {
+		$("#idsucursal").val($(this).val());
+		$("#form").submit();
 	});
 </script>

@@ -2,6 +2,7 @@
 <html lang="es">
 	<head>
 		<title>Si Soft - POS</title>
+		<link rel="shortcut icon" href="views/img/logo.png" />
 		<?php include_once 'views/fragmentos/vendor.php'; ?>
 		
 	</head>
@@ -37,27 +38,27 @@
 					</div>
 
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="empresa"><strong>Nombre:</strong></label>
+						<label for="empresa"><strong>Nombre: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese nombre de la empresa" id="empresa" name="empresa" required>
 						<small class="text-danger text-left" id="msj_empresa"></small>
 					</div>
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="rfc"><strong>RFC:</strong></label>
+						<label for="rfc"><strong>RFC: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese RFC de la empresa" id="rfc" name="rfc" required>
 						<small class="text-danger text-left" id="msj_rfc"></small>
 					</div>
 					<div class="form-grou col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="telefono"><strong>Teléfono:</strong></label>
+						<label for="telefono"><strong>Teléfono: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese Teléfono de la empresa" id="telefono" name="telefono" required>
 						<small class="text-danger text-left w-100" id="msj_telefono"></small>
 					</div>
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="correo"><strong>Correo:</strong></label>
+						<label for="correo"><strong>Correo: <span class="text-danger">*</span></strong></label>
 						<input type="email" class="form-control" placeholder="Ingrese Correo de la empresa" id="correo" name="correo" required>
 						<small class="text-danger text-left w-100" id="msj_correo"></small>
 					</div>
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="direccion"><strong>Dirección:</strong></label>
+						<label for="direccion"><strong>Dirección: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese Correo de la empresa" id="direccion" name="direccion" required>
 						<small class="text-danger text-left w-100" id="msj_direccion"></small>
 					</div>
@@ -67,7 +68,7 @@
 					</div>
 
 					<div class="form-group input-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label class="w-100" for="password"><strong>Contrase&ntilde;a:</strong></label>
+						<label class="w-100" for="password"><strong>Contrase&ntilde;a: <span class="text-danger">*</span></strong></label>
 						<input type="password" class="form-control" placeholder="Ingrese contrase&ntilde;a" id="password" name="password" required>
 						<div class="input-group-append">
 							<span class="input-group-text pointer" id="showPass">
@@ -77,22 +78,22 @@
 						<small class="text-left text-danger w-100" id="msj_password"></small>
 					</div>
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="usuario"><strong>Usuario:</strong></label>
+						<label for="usuario"><strong>Usuario: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese Nombre de usuario" id="usuario" name="usuario" required>
 						<small class="text-danger text-left w-100" id="msj_usuario"></small>
 					</div>
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="empresa"><strong>Nombre:</strong></label>
+						<label for="empresa"><strong>Nombre: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese nombre de usuario" id="unombre" name="unombre" required>
 						<small class="text-danger text-left" id="msj_unombre"></small>
 					</div>
 					<div class="form-grou col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="telefono"><strong>Teléfono:</strong></label>
+						<label for="telefono"><strong>Teléfono: <span class="text-danger">*</span></strong></label>
 						<input type="text" class="form-control" placeholder="Ingrese Teléfono de usuario" id="utelefono" name="utelefono" required>
 						<small class="text-danger text-left w-100" id="msj_utelefono"></small>
 					</div>
 					<div class="form-group col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-						<label for="correo"><strong>Correo:</strong></label>
+						<label for="correo"><strong>Correo: <span class="text-danger">*</span></strong></label>
 						<input type="email" class="form-control" placeholder="Ingrese Correo de usuario" id="ucorreo" name="ucorreo" required>
 						<small class="text-danger text-left w-100" id="msj_ucorreo"></small>
 					</div>
@@ -129,17 +130,17 @@
 					}
 				});
 				$("#password, #usuario").keypress(function(event) {
-					$("#msj_username").text('');
+					$("#msj_usuario").text('');
 					$("#msj_password").text('');
 					if ( (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode<65 || event.keyCode>90) && (event.keyCode<97 || event.keyCode>122) && event.keyCode != 35 && event.keyCode != 42 ) {
 						return false;
 					}
 					let user_pass = $(this).val() + String.fromCharCode(event.keyCode);
-					if(user_pass.length == 12){
+					if(user_pass.length == 50){
 						return false;
-					} else if (user_pass.length < 6 || user_pass.length> 12) {
+					} else if (user_pass.length < 6 || user_pass.length > 50) {
 						var id = $(this).attr('id');
-						$("#msj_" + id).text('Solo adminite de 6 a 12 caracteres.');
+						$("#msj_" + id).text('Solo adminite de 6 a 50 caracteres.');
 						
 					}
 					

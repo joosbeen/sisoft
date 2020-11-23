@@ -23,8 +23,10 @@ class ViewMdl{
 		
 		$pathView = "views/templates/home.php";
 
-		if ($view == "home" || $view == "sucursales" || $view == "sucursal" 
-			|| $view == "registrarse" || $view == "dashboard") {
+		if ($view == "home" || $view == "dashboard" || 
+			$view == "sucursales" || $view == "sucursal" || 
+			$view == "usuarios" || $view == "usuario" || 
+			$view == "proveedores" || $view == "proveedor") {
 			
 			$pathView = "views/templates/" . $view . ".php";
 

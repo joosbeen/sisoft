@@ -38,15 +38,33 @@
 			//$sql = "SELECT * FROM admin_empresa WHERE (UPPER(correo_empresa)=UPPER('" . $username . "') OR UPPER(nombre_usuario)=UPPER('" . $username . "')) AND contrasena=MD5('" . $password  . "');";
 			
 
-			$result = $conexion->query($sql);
+			$usuarios = $conexion->query($sql);
 
-			if ($result->num_rows > 0) {
-				$row = $result->fetch_assoc();
+			if ($usuarios->num_rows > 0) {
+				$usuario = $usuarios->fetch_assoc();
 
-				if ($row["estado"] == true) {
-					crearSesion($row);
-					$data = array('message' => 'ok');
-					echo json_encode($data);					
+				if ($usuario["estado"] == true) {
+
+					if ((strtolower($usuario["rol"] ) == strtolower("administrador")) || 
+						(strtolower($usuario["rol"] ) == strtolower("master"))){
+						//echo "rol: administrador, master";
+						$qry = "SELECT em.* FROM empresa em, admin_empresa ae 
+						WHERE em.idempresa = ae.idempresa AND ae.idusuario = " . $usuario["idusuario"];
+					} else {
+						//echo "rol: cajero, encargado";
+						$qry = "SELECT su.*, em.rfc FROM usuario_sucursal usu, empresa em, sucursal su 
+						WHERE usu.idsucursal = su.idsucursal AND usu.idempresa = em.idempresa AND usu.idusuario = " . $usuario["idusuario"];
+					}
+
+					$empresas = $conexion->query($qry);
+					$empresa = $empresas->fetch_assoc();
+					setUsuario($usuario);
+					setEmpresa($empresa);
+
+					http_response_code(200);
+					$data = array('message' => "ok");
+					echo json_encode($data);
+									
 				} else {
 					http_response_code(403);
 					$data = array('message' => "* El estado se encuentra inactivo, contacte a su administrador.");
